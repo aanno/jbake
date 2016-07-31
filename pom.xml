@@ -87,6 +87,13 @@
         <mockito.version>1.10.19</mockito.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>rubygems-releases</id>
+            <url>http://rubygems-proxy.torquebox.org/releases</url>
+        </repository>
+    </repositories>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
@@ -341,6 +348,23 @@
                 </configuration>
             </plugin>
 
+            <!-- https://github.com/jruby/jruby/wiki/Jruby-Scripting-container-using-Gems-with-a-Maven-Project -->
+            <plugin>
+                <groupId>de.saumya.mojo</groupId>
+                <artifactId>gem-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <includeRubygemsInResources>true</includeRubygemsInResources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>initialize</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Mandatory plugins for using Spock -->
             <!-- The gmavenplus plugin is used to compile Groovy code. To learn more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
             <!-- <plugin>
@@ -369,6 +393,7 @@
             </plugin> -->
 
         </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -520,6 +545,20 @@
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- this has been a transitive dependency before - now it is used directly (e.g. for haml) -->
+        <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-complete</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+        <!-- https://github.com/jruby/jruby/wiki/Jruby-Scripting-container-using-Gems-with-a-Maven-Project -->
+        <dependency>
+            <groupId>rubygems</groupId>
+            <artifactId>haml</artifactId>
+            <version>4.0.7</version>
+            <type>gem</type>
         </dependency>
     </dependencies>
 </project>

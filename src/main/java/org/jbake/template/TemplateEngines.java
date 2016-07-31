@@ -77,19 +77,27 @@ public class TemplateEngines {
             @SuppressWarnings("unchecked")
             Class<? extends AbstractTemplateEngine> engineClass = (Class<? extends AbstractTemplateEngine>) Class.forName(engineClassName, false, TemplateEngines.class.getClassLoader());
             Constructor<? extends AbstractTemplateEngine> ctor = engineClass.getConstructor(CompositeConfiguration.class, ContentStore.class, File.class, File.class);
-            return ctor.newInstance(config, db, destination, templatesPath);
+            AbstractTemplateEngine result = ctor.newInstance(config, db, destination, templatesPath);
+            LOGGER.info("loaded template engine " + engineClassName + ", template path: " + templatesPath);
+            return result;
         } catch (ClassNotFoundException e) {
+            LOGGER.warn("loading template engine " + engineClassName + " failed: " + e);
             return null;
         } catch (InstantiationException e) {
+            LOGGER.warn("loading template engine " + engineClassName + " failed: " + e, e);
             return null;
         } catch (IllegalAccessException e) {
+            LOGGER.warn("loading template engine " + engineClassName + " failed: " + e, e);
             return null;
         } catch (NoClassDefFoundError e) {
             // a dependency of the engine may not be found on classpath
+            LOGGER.warn("loading template engine " + engineClassName + " failed: " + e, e);
             return null;
         } catch (NoSuchMethodException e) {
+            LOGGER.warn("loading template engine " + engineClassName + " failed: " + e, e);
             return null;
         } catch (InvocationTargetException e) {
+            LOGGER.warn("loading template engine " + engineClassName + " failed: " + e, e.getCause());
             return null;
         }
     }
