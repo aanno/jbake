@@ -2,11 +2,13 @@ package org.jbake.template;
 
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.jbake.app.ContentStore;
+import org.jruby.RubyObject;
+import org.jruby.util.NormalizedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.Writer;
+import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HamlTemplateEngine extends AbstractJRubyTemplateEngine {
@@ -19,20 +21,41 @@ public class HamlTemplateEngine extends AbstractJRubyTemplateEngine {
 
     @Override
     public void renderDocument(Map<String, Object> model, String templateName, Writer writer) throws RenderingException {
-        /*
-        Object result = scriptingContainer.runScriptlet("require 'haml'\n" +
-                "");
-         */
-        Object result = scriptingContainer.runScriptlet(
-                "#!/usr/bin/env ruby\n" +
-                "# The command line Haml parser.\n" +
-                "\n" +
-                "$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'\n" +
+        Map<String, String> options = new HashMap<String, String>();
+        options.put("encoding", "utf-8");
+        File templateFile = new File(templatesPath, templateName);
+        Object engine = scriptingContainer.runScriptlet(
                 "require 'haml'\n" +
-                "require 'haml/exec'\n" +
-                "\n" +
-                "opts = Haml::Exec::Haml.new(ARGV)\n" +
-                "opts.parse!\n");
+                "require 'haml/engine'\n" +
+                "Haml::Engine"
+        );
+        RubyObject haml = null;
+        try {
+            haml = scriptingContainer.runRubyMethod(RubyObject.class, engine, "new",
+                    readFile(templateFile), options);
+        } catch (IOException e) {
+            throw new RenderingException(e.toString(), e);
+        }
+        String result = scriptingContainer.runRubyMethod(String.class, haml, "render");
         LOGGER.info("result is " + result);
+    }
+
+    // see http://stackoverflow.com/questions/326390/how-do-i-create-a-java-string-from-the-contents-of-a-file
+    // for java 7 improvements
+    private String readFile(File file) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        String ls = System.getProperty("line.separator");
+
+        try {
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append(ls);
+            }
+            return stringBuilder.toString();
+        } finally {
+            reader.close();
+        }
     }
 }

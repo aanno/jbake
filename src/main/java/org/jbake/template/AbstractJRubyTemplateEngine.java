@@ -2,6 +2,7 @@ package org.jbake.template;
 
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.jbake.app.ContentStore;
+import org.jruby.Ruby;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.LocalVariableBehavior;
 import org.jruby.embed.ScriptingContainer;
@@ -29,10 +30,13 @@ public abstract class AbstractJRubyTemplateEngine extends AbstractTemplateEngine
 
     protected ScriptingContainer scriptingContainer;
 
+    protected Ruby runtime;
+
     public AbstractJRubyTemplateEngine(final CompositeConfiguration config, final ContentStore db, final File destination, final File templatesPath) {
         super(config, db, destination, templatesPath);
 
         scriptingContainer = new ScriptingContainer(LocalContextScope.CONCURRENT, LocalVariableBehavior.TRANSIENT);
+        runtime = scriptingContainer.getProvider().getRuntime();
     }
 
 
