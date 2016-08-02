@@ -24,6 +24,7 @@ public class HamlTemplateEngine extends AbstractJRubyTemplateEngine {
         Map<String, String> options = new HashMap<String, String>();
         options.put("encoding", "utf-8");
         File templateFile = new File(templatesPath, templateName);
+
         Object engine = scriptingContainer.runScriptlet(
                 "require 'haml'\n" +
                 "require 'haml/engine'\n" +
