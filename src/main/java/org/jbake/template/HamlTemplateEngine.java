@@ -1,5 +1,6 @@
 package org.jbake.template;
 
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.jbake.app.ContentStore;
 import org.jruby.RubyObject;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +36,10 @@ public class HamlTemplateEngine extends AbstractJRubyTemplateEngine {
         Map<String, String> options = new HashMap<String, String>();
         options.put("encoding", "utf-8");
         File templateFile = new File(templatesPath, templateName);
+
+        List<ODocument> pages = db.getPublishedPages();
+        List<ODocument> posts = db.getPublishedPosts();
+        List<ODocument> cont = db.getPublishedContent("post");
 
         Object engine = scriptingContainer.runScriptlet(
                 "require 'haml'\n" +
