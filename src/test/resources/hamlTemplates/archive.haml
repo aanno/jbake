@@ -1,6 +1,24 @@
 !!! Strict
+- require 'date'
 %html(xmlns="http://www.w3.org/1999/xhtml")
+  %head/
+  %body
+    %div/
 
+    %div.row-fluid.marketing
+      %div.span12
+        %h2 Archive
+        - @posts.each do | post |
+          - last_month = null
+          - this_month = post.date.strftime("%^b %Y")
+          - this_day = post.date.strftime("%d %^b")
+          - if last_month != this_month
+            %h3= this_month
+
+            %h4= this_day
+              %a{:href => post.uri}= post.title
+    %hr/
+    %div/
 
 -#
     <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">

@@ -11,6 +11,16 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Reference:
+ * http://haml.info/docs/yardoc/file.REFERENCE.html
+ *
+ * Subtemplates/Includes/Inlines/Partials:
+ * http://stackoverflow.com/questions/4421842/structuring-of-layout-template-in-haml
+ *
+ * Context/Local Variables:
+ * http://stackoverflow.com/questions/16025453/how-can-i-pass-instance-variables-to-a-haml-template-on-the-command-line
+ */
 public class HamlTemplateEngine extends AbstractJRubyTemplateEngine {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ModelExtractors.class);
@@ -37,7 +47,7 @@ public class HamlTemplateEngine extends AbstractJRubyTemplateEngine {
         } catch (IOException e) {
             throw new RenderingException(e.toString(), e);
         }
-        String result = scriptingContainer.runRubyMethod(String.class, haml, "render");
+        String result = scriptingContainer.runRubyMethod(String.class, haml, "render", null, model);
         LOGGER.info("result is " + result);
     }
 

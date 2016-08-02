@@ -3,8 +3,8 @@
 %list
 - @all_content.each do | content |
   %content
-    %uri= @content.uri
-    %date= @content.date.strftime("%^b %Y")
+    %uri= content.uri
+    %date= content.date.strftime("%^b %Y")
 
 -#
     <?xml version="1.0" encoding="UTF-8"?>
